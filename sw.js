@@ -1,12 +1,12 @@
-const CACHE_NAME = 'brain-master-v1';
+const CACHE_NAME = 'brain-master-v2';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/style.css',
-  '/js/data.js',
-  '/js/app.js',
-  '/manifest.webmanifest',
-  '/icon.svg'
+  './',
+  './index.html',
+  './css/style.css',
+  './js/data.js',
+  './js/app.js',
+  './manifest.webmanifest',
+  './icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
