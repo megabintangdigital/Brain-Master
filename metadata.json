@@ -1,0 +1,6 @@
+{
+  "name": "Brain Master — Memory & Logic",
+  "description": "Aplikasi Progressive Web App (PWA) pembelajaran dan latihan otak berfokus pada kemampuan ingatan dan logika bertahap dari Basic hingga Master serta Olimpiade.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Brain Master — Memory & Logic</title>
+    <meta name="description" content="Aplikasi Progressive Web App (PWA) pembelajaran dan latihan otak berfokus pada kemampuan ingatan dan logika bertahap dari Basic hingga Master serta Olimpiade." />
+    <meta property="og:title" content="Brain Master — Memory & Logic" />
+    <meta property="og:description" content="Aplikasi Progressive Web App (PWA) pembelajaran dan latihan otak berfokus pada kemampuan ingatan dan logika bertahap dari Basic hingga Master serta Olimpiade." />
+    <meta property="og:type" content="website" />
+    
+    <!-- PWA Compliance -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#1e1035" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="BrainMaster" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/icon.svg" />
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet" />
+
+    <!-- App Styles -->
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <!-- Mobile App Container Wrapper -->
+    <div id="app-container">
+      
+      <!-- ==============================================
+           FIRST-TIME USER ACTIVATION SCREEN (LOCK SCREEN)
+           ============================================== -->
+      <div id="screen-activation" class="activation-screen-overlay" style="display: none;">
+        <div class="activation-card">
+          <!-- Logo -->
+          <div class="activation-logo-glow" id="activation-logo">🧠</div>
+          
+          <!-- Brand Header -->
+          <h1 class="activation-title">Brain Master</h1>
+          <div class="activation-subtitle">Memory &amp; Logic</div>
+
+          <!-- Hari, Tanggal (Otomatis menyesuaikan hari/tanggal hari ini) -->
+          <div class="activation-date-pill" id="activation-date-display">
+            <span>📅</span> <span id="activation-date-text">Memuat tanggal...</span>
+          </div>
+
+          <!-- Input / Masukkan Kode Form -->
+          <div class="activation-form-group">
+            <label for="input-activation-code" class="activation-label">Masukkan Kode Aktivasi:</label>
+            <input 
+              type="text" 
+              id="input-activation-code" 
+              class="activation-input" 
+              placeholder="Masukkan kode aktivasi dari admin..." 
+              autocomplete="off" 
+              autocapitalize="characters"
+              spellcheck="false"
+            />
+            <div class="activation-format-notice">
+              <span>ℹ️</span> <span>Hubungi admin melalui WhatsApp untuk mendapatkan kode verifikasi</span>
+            </div>
+            <div id="activation-error" class="activation-error-msg">Kode aktivasi salah atau tidak sesuai. Silakan hubungi admin.</div>
+          </div>
+
+          <!-- Submit Button -->
+          <button id="btn-submit-activation" class="btn-activation-submit">
+            Verifikasi &amp; Masuk
+          </button>
+
+          <!-- Catatan / Disclaimer -->
+          <div class="activation-disclaimer">
+            ⚠️ <strong>Catatan:</strong> Dilarang diperjualbelikan tanpa seizin pembuat.
+          </div>
+
+          <!-- Admin Contact (WhatsApp 6285722641239) -->
+          <div class="activation-admin-card">
+            <a 
+              id="btn-contact-admin" 
+              class="btn-contact-admin-action" 
+              href="https://wa.me/6285722641239?text=Hallo%20min%2C%20saya%20sudah%20CO.%0Asaya%20mau%20kode%20veriikasinya%20ya%20%3F" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style="text-decoration: none;"
+            >
+              <span>💬</span> Hubungi Admin (WhatsApp)
+            </a>
+            <div style="margin-top: 9px; font-size: 11.5px; color: var(--text-muted); text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              <span>📱</span>
+              <span>WhatsApp Admin: <strong style="color: #34d399; font-weight: 700;">+62 857-2264-1239</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Application Header -->
+      <header class="app-header">
+        <div class="brand-section">
+          <div class="brand-icon-wrapper">🧠</div>
+          <div>
+            <h1 class="brand-title">Brain Master</h1>
+            <span class="brand-subtitle">Memory & Logic</span>
+          </div>
+        </div>
+
+        <div class="header-status-pill">
+          <button id="pwa-install-header-btn" class="install-app-btn" style="display: none;">
+            <span>⬇️</span> Install
+          </button>
+          <button id="btn-contrast-toggle-header" class="streak-pill" style="cursor: pointer; padding: 5px 8px; border-color: var(--border-glass);" title="Aktifkan / Nonaktifkan Tema Kontras Tinggi (Aksesibilitas)" aria-label="Toggle Tema Kontras Tinggi">
+            <span id="contrast-icon-header">👁️</span>
+          </button>
+          <button id="btn-sound-toggle-header" class="streak-pill" style="cursor: pointer; padding: 5px 8px; border-color: var(--border-glass);" title="Aktifkan / Bisukan Suara">
+            <span id="sound-icon-header">🔊</span>
+          </button>
+          <div class="streak-pill" id="header-streak-badge" title="Streak latihan berturut-turut">
+            <span>🔥</span> <span id="header-streak-count">1</span>
+          </div>
+          <div class="xp-badge" id="header-xp-badge" title="Total XP">
+            <span>⚡</span> <span id="header-xp-val">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Offline Status Banner -->
+      <div id="offline-indicator" class="offline-banner">
+        <span>📡</span> Mode Offline — Menggunakan Data Tersimpan
+      </div>
+
+      <!-- Main Scrollable Content Area -->
+      <main id="main-content">
+        
+        <!-- ==============================================
+             1. HOME SCREEN
+             ============================================== -->
+        <section id="screen-home" class="screen-panel active">
+          
+          <!-- Hero User Progress Card -->
+          <div class="hero-user-card">
+            <div class="hero-top-row">
+              <div class="user-profile-summary">
+                <div class="user-avatar-circle" id="home-user-avatar-btn">
+                  <div class="user-avatar-inner" id="home-avatar-emoji">🧠</div>
+                </div>
+                <div class="user-info-text">
+                  <h2 id="home-user-name">Peserta Otak</h2>
+                  <div class="user-rank-tag">
+                    <span id="home-level-badge">🌱</span>
+                    <span id="home-level-title">Rookie</span>
+                  </div>
+                </div>
+              </div>
+              <div class="level-indicator-pill" id="home-level-num">Level 1</div>
+            </div>
+
+            <!-- XP Progress Bar to Next Level -->
+            <div class="xp-progress-block">
+              <div class="xp-label-row">
+                <span>Progress Level</span>
+                <span id="home-xp-ratio">0 / 300 XP</span>
+              </div>
+              <div class="xp-track">
+                <div class="xp-fill" id="home-xp-fill" style="width: 10%;"></div>
+              </div>
+            </div>
+
+            <!-- Main CTA: Lanjutkan Latihan -->
+            <button id="btn-home-continue" class="btn-continue-training">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 20px;">⚡</span>
+                <div style="text-align: left;">
+                  <div style="font-size: 14px; font-weight: 800;">Lanjutkan Latihan</div>
+                  <div id="home-continue-subtitle" style="font-size: 11px; opacity: 0.9; font-weight: 500;">Level 1 — Basic Challenge</div>
+                </div>
+              </div>
+              <span style="font-size: 18px;">➔</span>
+            </button>
+          </div>
+
+          <!-- Memory vs Logic Score Cards -->
+          <div class="stats-grid-2">
+            <div class="stat-metric-card memory-card">
+              <div class="stat-top-row">
+                <span class="stat-icon-tag">🧠</span>
+                <span class="stat-trend trend-up">Zona Ingatan</span>
+              </div>
+              <div class="stat-value" id="home-stat-memory">500</div>
+              <div class="stat-name">Memory Score</div>
+            </div>
+
+            <div class="stat-metric-card logic-card">
+              <div class="stat-top-row">
+                <span class="stat-icon-tag">🧩</span>
+                <span class="stat-trend trend-up">Zona Logika</span>
+              </div>
+              <div class="stat-value" id="home-stat-logic">500</div>
+              <div class="stat-name">Logic Score</div>
+            </div>
+          </div>
+
+          <!-- Daily Brain Training Card -->
+          <div class="glass-card highlight-gold daily-challenge-card" id="btn-launch-daily">
+            <div class="daily-info">
+              <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="font-size: 14px;">📅</span>
+                <span style="font-size: 11px; font-weight: 800; color: #fbbf24; text-transform: uppercase;">Paket Hari Ini</span>
+              </div>
+              <h3>Daily Brain Training</h3>
+              <p id="daily-training-status">5 Memory + 5 Logic + Speed Challenge</p>
+            </div>
+            <div class="daily-btn-play">▶</div>
+          </div>
+
+          <!-- Adaptive Exercise Recommendation -->
+          <div class="section-header">
+            <h3 class="section-title">
+              <span class="badge-icon">🎯</span> Rekomendasi Adaptif
+            </h3>
+            <span class="section-link" id="link-view-all-latihan">Lihat Semua</span>
+          </div>
+
+          <div class="recommendation-card" id="btn-adaptive-rec">
+            <div class="rec-icon-box" id="rec-icon">⚡</div>
+            <div class="rec-text" style="flex: 1;">
+              <h4 id="rec-title">Latih Working Memory</h4>
+              <p id="rec-desc">Sistem mendeteksi kamu siap memperkuat manipulasi memori aktif.</p>
+            </div>
+            <span style="font-size: 16px; color: var(--cyan-neon);">➔</span>
+          </div>
+
+          <!-- Quick Mini-Games Practice Carousel -->
+          <div class="section-header">
+            <h3 class="section-title">
+              <span class="badge-icon">🎮</span> Mini Games Kilat
+            </h3>
+          </div>
+
+          <div class="quick-games-scroll" id="home-quick-games-list">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             2. MATERI SCREEN
+             ============================================== -->
+        <section id="screen-materi" class="screen-panel">
+          <div class="section-header" style="margin-top: 4px;">
+            <h2 class="section-title" style="font-size: 18px;">
+              <span>📚</span> Modul Pembelajaran
+            </h2>
+            <span style="font-size: 12px; color: var(--text-muted);" id="materi-completed-counter">0/24 Selesai</span>
+          </div>
+
+          <!-- Tab Switcher (Zona Ingatan vs Zona Logika) -->
+          <div class="tab-switcher">
+            <button id="tab-materi-memory" class="tab-btn active">
+              <span>🧠</span> Zona Ingatan
+            </button>
+            <button id="tab-materi-logic" class="tab-btn">
+              <span>🧩</span> Zona Logika
+            </button>
+          </div>
+
+          <!-- Zone Hero Banner -->
+          <div id="materi-zone-banner" class="zone-hero-banner memory-theme">
+            <div class="zone-hero-text">
+              <h3 id="zone-banner-title">Zona Ingatan (Memory Zone)</h3>
+              <p id="zone-banner-desc">Pelajari cara kerja saraf otak, teknik loci, PAO system, dan trik daya ingat juara.</p>
+            </div>
+          </div>
+
+          <!-- Materi Modules List -->
+          <div class="materi-list-container" id="materi-items-list">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             3. LATIHAN SCREEN
+             ============================================== -->
+        <section id="screen-latihan" class="screen-panel">
+          <div class="section-header" style="margin-top: 4px;">
+            <h2 class="section-title" style="font-size: 18px;">
+              <span>🎯</span> Perjalanan Tingkat Latihan
+            </h2>
+          </div>
+
+          <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 14px;">
+            Selesaikan modul bertahap dari Basic hingga Master untuk membuka level yang lebih tinggi.
+          </p>
+
+          <!-- Levels Container (1 to 6) -->
+          <div class="levels-scroll-container" id="levels-container">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             4. OLIMPIADE SCREEN
+             ============================================== -->
+        <section id="screen-olimpiade" class="screen-panel">
+          
+          <div class="olimpiade-hero">
+            <h2><span>🏆</span> Arena Olimpiade Sains & Logika</h2>
+            <p>Latihan soal kompetisi penalaran matematika, logika, dan problem solving tingkat nasional & internasional.</p>
+          </div>
+
+          <!-- Mode Switcher: Tryout vs Kompetisi -->
+          <div class="olimpiade-mode-cards">
+            <div class="mode-select-card active" id="mode-tryout-btn">
+              <div class="mode-header">
+                <span class="mode-icon">📝</span>
+                <span class="stat-trend trend-up">Edukasi</span>
+              </div>
+              <div class="mode-name">Mode Tryout</div>
+              <div class="mode-desc">Pembahasan & strategi solusi instan setiap soal.</div>
+            </div>
+
+            <div class="mode-select-card" id="mode-competition-btn">
+              <div class="mode-header">
+                <span class="mode-icon">⏱️</span>
+                <span class="stat-trend" style="background: rgba(239, 68, 68, 0.2); color: #f87171;">Tantangan</span>
+              </div>
+              <div class="mode-name">Simulasi Lomba</div>
+              <div class="mode-desc">Timer ketat, skor akumulasi, & evaluasi akurasi olimpiade.</div>
+            </div>
+          </div>
+
+          <!-- Olympiad Categories Grid -->
+          <div class="section-header">
+            <h3 class="section-title">
+              <span>📐</span> Paket Bidang Kompetisi
+            </h3>
+          </div>
+
+          <div class="olympiad-cat-grid" id="olympiad-categories-list">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Latihan Drill & Uji Ketangkasan Soal Olimpiade -->
+          <div class="section-header" style="margin-top: 22px;">
+            <h3 class="section-title">
+              <span>⚡</span> Latihan Drill & Uji Ketangkasan Soal
+            </h3>
+            <span style="font-size: 11.5px; color: var(--text-muted);">Praktik Langsung</span>
+          </div>
+
+          <div class="olympiad-drills-grid" id="olympiad-drills-list">
+            <!-- Rendered by JS -->
+          </div>
+        </section>
+
+        <!-- ==============================================
+             5. PROFIL SCREEN
+             ============================================== -->
+        <section id="screen-profil" class="screen-panel">
+          
+          <!-- Profile Card -->
+          <div class="glass-card highlight-purple profile-header-card">
+            <div class="profile-avatar-large" id="btn-change-avatar" title="Klik untuk ganti avatar">
+              <span id="profile-avatar-emoji">🧠</span>
+            </div>
+            <div>
+              <h2 class="profile-username" id="profile-user-name">Peserta Otak</h2>
+              <div style="margin-top: 4px;">
+                <div class="profile-level-chip" id="profile-level-badge">
+                  <span>🌱</span> Rookie • Pemula Otak
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skill Radar Chart Canvas -->
+          <div class="glass-card">
+            <div class="section-header" style="margin: 0 0 10px;">
+              <h3 class="section-title"><span>📊</span> Radar Kemampuan Otak</h3>
+            </div>
+            <div class="radar-chart-container">
+              <canvas id="skillsRadarCanvas" width="300" height="250"></canvas>
+            </div>
+          </div>
+
+          <!-- Comprehensive Stats 4-Grid -->
+          <div class="profile-stats-grid">
+            <div class="profile-stat-box">
+              <div class="p-stat-val" id="p-stat-total-xp">0</div>
+              <div class="p-stat-lbl">Total XP</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="p-stat-val" id="p-stat-streak">1 Hari</div>
+              <div class="p-stat-lbl">Streak Latihan</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="p-stat-val" id="p-stat-accuracy">92%</div>
+              <div class="p-stat-lbl">Rata-rata Akurasi</div>
+            </div>
+            <div class="profile-stat-box">
+              <div class="p-stat-val" id="p-stat-completed">0</div>
+              <div class="p-stat-lbl">Latihan Selesai</div>
+            </div>
+          </div>
+
+          <!-- Achievements Showcase -->
+          <div class="section-header" style="margin-top: 18px;">
+            <h3 class="section-title"><span>🏆</span> Lencana Prestasi (Achievements)</h3>
+            <span class="section-link" id="profile-ach-count">0/12</span>
+          </div>
+
+          <div id="profile-ach-empty-note" style="display: none; padding: 10px 14px; background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: var(--radius-md); font-size: 12px; color: var(--text-muted); margin-bottom: 12px; align-items: center; gap: 8px;">
+            <span style="font-size: 16px;">🎯</span>
+            <span>Belum ada lencana yang terbuka. Selesaikan latihan pertamamu untuk membuka lencana perdana!</span>
+          </div>
+
+          <div class="achievements-grid" id="profile-achievements-list">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- App Settings & Data Controls -->
+          <div class="section-header" style="margin-top: 20px;">
+            <h3 class="section-title"><span>⚙️</span> Pengaturan & Data</h3>
+          </div>
+
+          <div class="glass-card" style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: var(--radius-md); font-size: 13px;">
+              <span style="color: var(--text-sub); display: flex; align-items: center; gap: 6px;">
+                <span>🛡️</span> Status Lisensi:
+              </span>
+              <span style="color: #34d399; font-weight: 800;">Teraktivasi Resmi</span>
+            </div>
+            <button id="btn-install-pwa-profile" class="btn-continue-training" style="padding: 12px 14px; font-size: 13px; display: none;">
+              <span>📲 Pasang Aplikasi (PWA)</span>
+              <span>Install</span>
+            </button>
+            <button id="btn-edit-username" class="profile-setting-btn">
+              <span style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 18px;">✏️</span>
+                <span style="font-weight: 700; font-size: 13.5px;">Ubah Nama Pengguna</span>
+              </span>
+              <span style="color: var(--cyan-neon); font-size: 12px; font-weight: 700;">Edit ➔</span>
+            </button>
+            <button id="btn-toggle-high-contrast" class="profile-setting-btn" aria-pressed="false">
+              <span style="display: flex; align-items: center; gap: 10px;">
+                <span id="contrast-icon-profile" style="font-size: 18px;">👁️</span>
+                <span style="display: flex; flex-direction: column; text-align: left; gap: 2px;">
+                  <span id="contrast-label-profile" style="font-weight: 700; font-size: 13.5px;">Tema Kontras Tinggi (High Contrast)</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">Meningkatkan keterbacaan & kontras visual</span>
+                </span>
+              </span>
+              <span id="contrast-status-badge" class="user-rank-tag" style="background: rgba(100, 116, 139, 0.2); color: #94a3b8; font-weight: 800;">
+                Nonaktif
+              </span>
+            </button>
+            <button id="btn-toggle-sound" class="profile-setting-btn">
+              <span style="display: flex; align-items: center; gap: 10px;">
+                <span id="sound-icon-profile" style="font-size: 18px;">🔊</span>
+                <span id="sound-label-profile" style="font-weight: 700; font-size: 13.5px;">Efek Suara Permainan</span>
+              </span>
+              <span id="sound-status-badge" class="user-rank-tag" style="background: rgba(16, 185, 129, 0.2); color: #34d399; font-weight: 800;">
+                Aktif
+              </span>
+            </button>
+            <button id="btn-reset-data" class="profile-setting-btn danger-btn">
+              <span style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 18px;">⚠️</span>
+                <span style="font-weight: 700; font-size: 13.5px;">Reset Semua Progres &amp; Data</span>
+              </span>
+              <span style="font-size: 11.5px; opacity: 0.9; font-weight: 700; color: #f87171;">Hapus ➔</span>
+            </button>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- ==============================================
+           FIXED BOTTOM NAVIGATION MENU (Strict Rule)
+           ============================================== -->
+      <nav id="bottom-nav">
+        <button class="nav-item-btn active" data-target="screen-home">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">Home</span>
+        </button>
+        <button class="nav-item-btn" data-target="screen-materi">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Materi</span>
+        </button>
+        <button class="nav-item-btn" data-target="screen-latihan">
+          <span class="nav-icon">🎯</span>
+          <span class="nav-label">Latihan</span>
+        </button>
+        <button class="nav-item-btn" data-target="screen-olimpiade">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Olimpiade</span>
+        </button>
+        <button class="nav-item-btn" data-target="screen-profil">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">Profil</span>
+        </button>
+      </nav>
+
+      <!-- ==============================================
+           MODALS & OVERLAYS
+           ============================================== -->
+
+      <!-- 1. Materi Reader Modal -->
+      <div id="modal-materi-reader" class="modal-overlay">
+        <div class="modal-header">
+          <h3 id="reader-title">Detail Materi</h3>
+          <button class="btn-close-modal" id="btn-close-reader">✕</button>
+        </div>
+        <div class="modal-body">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+            <span class="user-rank-tag" id="reader-category">Kategori</span>
+            <span class="user-rank-tag" id="reader-time">⏱️ 4 mnt</span>
+          </div>
+
+          <div id="reader-content-body" style="line-height: 1.7; font-size: 14px; color: #e2e8f0;">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="glass-card highlight-cyan" style="margin-top: 18px;">
+            <h4 style="font-weight: 800; color: var(--cyan-neon); margin-bottom: 4px;">💡 Tips Master:</h4>
+            <p id="reader-tips" style="font-size: 13px; color: #cbd5e1;"></p>
+          </div>
+
+          <!-- Interactive Quick Test Inside Reader -->
+          <div class="glass-card" style="margin-top: 14px;" id="reader-quiz-container">
+            <h4 style="font-weight: 800; margin-bottom: 8px;">🧠 Uji Pemahaman Cepat:</h4>
+            <p id="reader-quiz-q" style="font-size: 13px; font-weight: 600; margin-bottom: 10px;"></p>
+            <div id="reader-quiz-options" class="quiz-options-container" style="gap: 8px;"></div>
+            <div id="reader-quiz-result" style="display: none; margin-top: 10px; font-size: 12px;"></div>
+          </div>
+
+          <button id="btn-claim-materi-xp" class="btn-continue-training" style="margin-top: 18px;">
+            <span>Selesaikan Materi (+35 XP)</span>
+            <span>✓</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Interactive Game Player Modal -->
+      <div id="modal-game-player" class="modal-overlay">
+        <div class="modal-header">
+          <div>
+            <h3 id="game-player-title">Mini Game</h3>
+            <span id="game-player-subtitle" style="font-size: 11px; color: var(--text-muted);">Memory Challenge</span>
+          </div>
+          <button class="btn-close-modal" id="btn-close-game">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Game Status Bar -->
+          <div class="game-status-bar">
+            <div class="game-stat-chip">
+              <span>⏱️</span>
+              <span id="game-timer" class="timer-accent">30s</span>
+            </div>
+            <div class="game-stat-chip">
+              <span>🏆 Skor:</span>
+              <span id="game-score">0</span>
+            </div>
+            <div class="game-stat-chip">
+              <span id="game-stat-extra-label">❤️ Langkah:</span>
+              <span id="game-stat-extra-val">0</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Game Display Container -->
+          <div id="game-canvas-area">
+            <!-- Populated dynamically based on game type -->
+          </div>
+
+          <!-- Game Result Overlay Container (Hidden until game over) -->
+          <div id="game-result-box" class="glass-card highlight-gold" style="display: none; margin-top: 20px; text-align: center; padding: 24px 16px;">
+            <div style="font-size: 40px; margin-bottom: 8px;" id="game-result-emoji">🎉</div>
+            <h3 id="game-result-heading" style="font-size: 18px; font-weight: 800;">Latihan Selesai!</h3>
+            <p id="game-result-msg" style="font-size: 13px; color: var(--text-sub); margin: 6px 0 14px;"></p>
+            
+            <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 16px;">
+              <div class="user-rank-tag">Akurasi: <span id="game-res-acc">100%</span></div>
+              <div class="user-rank-tag" style="color: var(--cyan-neon);">XP: +<span id="game-res-xp">50</span></div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button id="btn-game-retry" class="game-tile-btn" style="flex: 1; text-align: center;">🔄 Coba Lagi</button>
+              <button id="btn-game-next" class="btn-continue-training" style="flex: 1; padding: 12px; justify-content: center;">Lanjut ➔</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 3. Avatar Picker Modal -->
+      <div id="modal-avatar-picker" class="modal-overlay">
+        <div class="modal-header">
+          <h3>Pilih Avatar Kognitif</h3>
+          <button class="btn-close-modal" id="btn-close-avatar-picker">✕</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">
+            Pilih avatar yang mewakili kepribadian dan gaya berpikirmu:
+          </p>
+          <div id="avatar-selection-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. iOS PWA Guide Modal -->
+      <div id="modal-ios-pwa" class="modal-overlay">
+        <div class="modal-header">
+          <h3>Pasang di iPhone / iPad</h3>
+          <button class="btn-close-modal" id="btn-close-ios-guide">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="glass-card highlight-cyan" style="line-height: 1.7; font-size: 14px;">
+            <p><strong>Langkah Mudah Pasang PWA di iOS:</strong></p>
+            <ol style="margin-left: 20px; margin-top: 8px;">
+              <li>Tekan tombol <strong>Share / Bagikan</strong> (ikon kotak dengan panah ke atas) di bilah navigasi Safari.</li>
+              <li>Gulir ke bawah dan pilih <strong>"Add to Home Screen" (Tambah ke Layar Utama)</strong>.</li>
+              <li>Tekan <strong>"Add" (Tambah)</strong> di sudut kanan atas.</li>
+            </ol>
+          </div>
+          <button class="btn-continue-training" id="btn-close-ios-guide-btn" style="margin-top: 16px; justify-content: center;">
+            Mengerti!
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Edit Username Modal -->
+      <div id="modal-edit-username" class="modal-overlay dialog-mode">
+        <div class="dialog-modal-card">
+          <div class="modal-header">
+            <h3>✏️ Ubah Nama Pengguna</h3>
+            <button class="btn-close-modal" id="btn-close-edit-username" title="Tutup">✕</button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px; padding: 20px;">
+            <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5;">
+              Masukkan nama baru yang akan ditampilkan di profil dan dashboard latihan:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label for="input-new-username" style="font-size: 12.5px; font-weight: 700; color: var(--cyan-neon);">
+                Nama Pengguna Baru:
+              </label>
+              <input
+                type="text"
+                id="input-new-username"
+                class="activation-input"
+                maxlength="20"
+                placeholder="Ketik namamu di sini..."
+                autocomplete="off"
+              />
+              <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
+                <span>Minimal 2 karakter, maksimal 20 karakter</span>
+                <span id="username-char-count">0/20</span>
+              </div>
+              <div id="edit-username-error" style="display: none; font-size: 11.5px; color: #f87171; background: rgba(239, 68, 68, 0.12); padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(239, 68, 68, 0.3);">
+                Nama tidak boleh kosong.
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button id="btn-cancel-edit-username" class="game-tile-btn" style="flex: 1; text-align: center; justify-content: center; padding: 12px; cursor: pointer;">
+                Batal
+              </button>
+              <button id="btn-save-edit-username" class="btn-continue-training" style="flex: 1.2; justify-content: center; padding: 12px; cursor: pointer;">
+                <span>💾 Simpan Perubahan</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Confirm Reset Data Modal -->
+      <div id="modal-confirm-reset" class="modal-overlay dialog-mode">
+        <div class="dialog-modal-card">
+          <div class="modal-header">
+            <h3 style="color: #f87171;">⚠️ Konfirmasi Reset Progres</h3>
+            <button class="btn-close-modal" id="btn-close-confirm-reset" title="Tutup">✕</button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px; text-align: center; padding: 24px 20px;">
+            <div style="font-size: 48px; margin-bottom: -4px;">⚠️</div>
+            <h4 style="font-size: 16px; font-weight: 800; color: #ffffff;">Reset Seluruh Progres Belajar?</h4>
+            <p style="font-size: 13px; color: var(--text-sub); line-height: 1.5; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 12px 14px; border-radius: var(--radius-md); text-align: left;">
+              Tindakan ini akan mengembalikan seluruh skor XP, lencana pencapaian, streak harian, dan materi yang telah diselesaikan ke kondisi awal. Tindakan ini <strong>tidak dapat dibatalkan</strong>.
+            </p>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button id="btn-cancel-reset" class="game-tile-btn" style="flex: 1; text-align: center; justify-content: center; padding: 12px; cursor: pointer;">
+                Batal
+              </button>
+              <button id="btn-confirm-reset-execute" class="btn-continue-training" style="flex: 1.2; justify-content: center; padding: 12px; background: linear-gradient(135deg, #dc2626, #b91c1c); box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4); cursor: pointer;">
+                <span>🗑️ Ya, Reset Semuanya</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Floating XP Popup Container -->
+      <div id="xp-toast-anchor"></div>
+
+    </div>
+
+    <!-- Core App Scripts (Strict Separation Rule) -->
+    <script src="/js/data.js"></script>
+    <script src="/js/app.js"></script>
+  </body>
+</html>
